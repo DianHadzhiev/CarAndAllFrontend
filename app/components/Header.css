@@ -1,0 +1,41 @@
+/* Header styles */
+.header {
+    background-color: #003580; /* Booking.com blue */
+    padding: 10px 0; /* Vertical padding for spacing */
+    border-bottom: 1px solid #ccc;
+}
+
+.header-container {
+    max-width: 1080px; /* Limit navbar width */
+    margin: 0 auto; /* Center navbar horizontally */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px; /* Horizontal padding for breathing room */
+}
+
+.header-logo {
+    margin: 0;
+    font-size: 1.5rem;
+    color: white; /* White text for the logo */
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.header-button {
+    padding: 10px 20px;
+    background-color: white; /* White button */
+    color: #003580; /* Booking.com blue for text */
+    border: 1px solid #003580;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header-button:hover {
+    background-color: #003580; /* Blue on hover */
+    color: white; /* White text on hover */
+}

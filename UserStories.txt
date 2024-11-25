@@ -1,0 +1,113 @@
+Account Management
+- Als particuliere huurder wil ik een account kunnen aanmaken en beheren.
+    - Gebruiker kan naam, adres, e-mail en telefoonnummer invoeren.
+    - Gebruiker ontvangt een bevestigingsmail bij accountaanmaak.
+    - Gebruiker kan persoonlijke gegevens bewerken via een accountinstellingenpagina.
+    - Gebruiker kan zijn/haar account verwijderen indien gewenst.
+
+- Als zakelijke klant wil ik een bedrijfsabonnement kunnen aanmaken.
+    - Bedrijf kan bedrijfsnaam, adres en KVK-nummer invoeren.
+    - Bevestiging van bedrijfsaccount wordt verzonden via e-mail.
+    - Bedrijfsabonnement bevat keuze voor abonnementstype (pay-as-you-go of prepaid).
+    - Na aanmaken kunnen medewerkers toegevoegd worden aan het bedrijfsabonnement.
+
+- Als klant wil ik een overzicht van de beschikbare abonnementen kunnen zien.
+    - Abonnementenpagina toont alle beschikbare abonnementstypes met prijzen en voorwaarden.
+    - Gebruiker kan details bekijken zoals inbegrepen dagen en eventuele kortingen.
+    - Systeem biedt een vergelijkingsoptie tussen verschillende abonnementen.
+    - Gebruiker kan direct een abonnement kiezen en afsluiten via deze pagina.
+
+
+Voertuig Reservering & Filters
+- Als particuliere huurder wil ik voertuigen kunnen selecteren op type.
+    - Gebruiker kan kiezen tussen auto’s, campers en caravans.
+    - Beschikbaarheid van voertuigen wordt getoond op basis van geselecteerde type en datum.
+    - Voertuigen kunnen worden gesorteerd op prijs, merk en beschikbaarheid.
+    - Gebruiker kan een voertuig kiezen en doorgaan met het aanvraagproces.
+
+- Als zakelijke huurder wil ik alleen auto’s kunnen huren.
+    - Alleen auto’s worden getoond voor zakelijke huurders.
+    - Beschikbare auto’s worden gefilterd op basis van ingevoerde data.
+    - Alleen zakelijke huurders met een goedgekeurd account kunnen auto’s huren.
+    - Voertuigdetails, zoals merk en type, worden weergegeven.
+
+- Als particulier wil ik de huurperiode van een voertuig kunnen selecteren.
+    - Gebruiker kan start- en einddatum selecteren met een kalenderveld.
+    - Voertuigen die niet beschikbaar zijn in de gekozen periode worden verborgen.
+    - Gebruiker krijgt een overzicht van de geselecteerde huurperiode bij de aanvraag.
+    - Fouten worden gemeld als data niet correct zijn ingevuld.
+
+- Als huurder wil ik een overzicht kunnen zien van alle beschikbare voertuigen, inclusief prijs en beschikbaarheid per datum.
+    - Overzicht toont voertuigen met beschikbaarheidsperiode, prijs per dag, en eventuele bijkomende kosten.
+    - Beschikbaarheid wordt gefilterd op geselecteerde data.
+    - Gebruiker kan voertuigen sorteren op prijs, merk en type.
+    - Gebruiker kan doorklikken voor meer details en voertuigselectie.
+
+
+- Als particuliere klant wil ik toegang hebben tot een breed scala aan voertuigen.
+    - Gebruiker kan voertuigen filteren op type (auto’s, campers, caravans).
+    - Beschikbaarheid van voertuigen wordt realtime weergegeven.
+    - Voertuigen kunnen gesorteerd worden op prijs, merk, bouwjaar en andere kenmerken.
+    - Systeem toont specifieke details van elk voertuig, inclusief foto’s.
+
+- Als klant wil ik eenvoudig voertuigen kunnen reserveren via een gebruiksvriendelijke interface.
+    - Gebruiker kan voertuigen selecteren, data invoeren en reserveren met minimale stappen.
+    - Interface is toegankelijk en intuïtief voor zowel mobiele als desktopgebruikers.
+    - Systeem waarschuwt bij ontbrekende of foutieve gegevens.
+    - Reservering wordt bevestigd via een eenvoudig proces met een samenvatting van de gegevens.
+
+
+
+Reservering Beheer
+- Als huurder wil ik een voertuig kunnen huren zonder tussenkomst van CarAndAll.
+    - Gebruiker kan zelfstandig een voertuig boeken en gegevens invoeren.
+    - Systeem verifieert beschikbaarheid en bevestigt de reservering.
+    - Huurder ontvangt automatisch een bevestigingsmail bij afronding van de boeking.
+    - Huurproces kan volledig digitaal afgehandeld worden zonder verdere interventie.
+
+- Als huurder wil ik de mogelijkheid hebben om mijn reservering te annuleren of wijzigen.
+    - Gebruiker kan reserveringen annuleren of aanpassen tot een bepaalde tijd voor de huurperiode.
+    - Systeem toont alle opties voor wijzigen of annuleren (datums, voertuig).
+    - Annulering of wijziging wordt bevestigd via e-mail.
+    - Eventuele kosten of restituties worden getoond bij de wijziging.
+
+- Als klant wil ik de status van mijn verhuuraanvraag kunnen volgen via mijn account.
+    - Gebruiker kan de status van zijn/haar aanvraag bekijken (in afwachting, goedgekeurd, afgewezen).
+    - Eventuele reden van afwijzing wordt vermeld in de status.
+    - Statusupdates worden realtime weergegeven in het account.
+    - Systeem stuurt een notificatie bij elke statuswijziging.
+
+- Als huurder wil ik automatisch een herinnering ontvangen over het ophalen en inleveren van het voertuig.
+    - Systeem stuurt automatische herinneringen voor ophaal- en inlevermomenten.
+    - Herinneringen bevatten informatie over locatie, tijd en eventuele instructies.
+    - Herinneringen worden een dag voor ophaal- en inleverdata verzonden.
+    - Herinneringen zijn zichtbaar in het account van de huurder.
+
+
+Huurgeschiedenis & Facturen
+- Als particuliere huurder wil ik mijn huurgeschiedenis kunnen bekijken.
+    - Gebruiker kan een overzicht inzien van eerdere huurtransacties.
+    - Geschiedenis toont huurperiode, voertuigdetails en kosten.
+    - Gebruiker kan facturen downloaden van eerdere reserveringen.
+    - Geschiedenis kan gefilterd worden op datum of voertuigtype.
+
+- Als zakelijke huurder wil ik een gedetailleerde factuur ontvangen van mijn huurkosten.
+    - Systeem genereert automatisch een gedetailleerde factuur na elke huurperiode.
+    - Factuur bevat huurgegevens, inclusief kosten per dag, eventuele extra’s en kortingen.
+    - Factuur kan gedownload worden in PDF-formaat.
+    - Huurder kan eerdere facturen terugvinden in zijn/haar account.
+
+
+
+Betalingen
+- Als huurder wil ik kunnen kiezen uit verschillende betalingsopties.
+    - Systeem biedt meerdere betalingsopties, inclusief maandabonnementen en pay-as-you-go.
+    - Gebruiker kan tijdens het huurproces een betaaloptie selecteren.
+    - Betaalgegevens worden veilig verwerkt via een geëncrypteerde verbinding.
+    - Betalingen worden bevestigd via e-mail met een overzicht van de kosten.
+
+- Als klant wil ik een duidelijk overzicht van de prijzen inclusief bijkomende kosten.
+    - Systeem toont een gedetailleerde kostenopgave tijdens het huurproces.
+    - Eventuele extra kosten (zoals verzekeringen, extra kilometers) worden duidelijk vermeld.
+    - Gebruiker krijgt een overzicht van de totale kosten voordat de reservering wordt bevestigd.
+    - Eventuele kortingen of toeslagen worden apart vermeld.

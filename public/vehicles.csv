@@ -1,0 +1,41 @@
+Type,Merk,Model,Kenteken,Kleur,Aanschafjaar
+Auto,Toyota,Corolla,AB-123-CD,Rood,2018
+Auto,Ford,Focus,EF-456-GH,Blauw,2019
+Auto,Volkswagen,Golf,IJ-789-KL,Zwart,2020
+Auto,Honda,Civic,MN-012-OP,Wit,2017
+Auto,BMW,3 Serie,QR-345-ST,Grijs,2021
+Auto,Audi,A4,UV-678-WX,Zilver,2016
+Auto,Mercedes,C-Klasse,YZ-901-AB,Blauw,2022
+Auto,Nissan,Qashqai,CD-234-EF,Groen,2015
+Auto,Peugeot,208,GH-567-IJ,Rood,2021
+Auto,Renault,Clio,KL-890-MN,Zwart,2018
+Caravan,Hobby,De Luxe,OP-123-QR,Wit,2017
+Caravan,Fendt,Bianco,ST-456-UV,Grijs,2018
+Caravan,Knaus,Sport,WX-789-YZ,Blauw,2019
+Caravan,Dethleffs,Camper,AB-012-CD,Groen,2016
+Caravan,Adria,Altea,EF-345-GH,Zilver,2020
+Caravan,Eriba,Touring,IJ-678-KL,Rood,2015
+Caravan,Tabbert,Puccini,MN-901-OP,Zwart,2021
+Caravan,Burstner,Premio,QR-234-ST,Wit,2019
+Caravan,LMC,Musica,UV-567-WX,Blauw,2018
+Caravan,Sprite,Cruzer,YZ-890-AB,Grijs,2022
+Camper,Volkswagen,California,CD-123-EF,Rood,2018
+Camper,Mercedes,Marco Polo,GH-456-IJ,Blauw,2019
+Camper,Ford,Nugget,KL-789-MN,Zwart,2020
+Camper,Fiat,Ducato,OP-012-QR,Wit,2017
+Camper,Citroen,Jumper,ST-345-UV,Grijs,2021
+Camper,Peugeot,Boxer,WX-678-YZ,Zilver,2016
+Camper,Renault,Master,AB-901-CD,Blauw,2022
+Camper,Iveco,Daily,EF-234-GH,Groen,2015
+Camper,Opel,Movano,IJ-567-KL,Rood,2021
+Camper,Nissan,NV400,MN-890-OP,Zwart,2018
+Auto,Kia,Sportage,QR-123-ST,Zilver,2019
+Auto,Hyundai,Tucson,UV-456-WX,Blauw,2020
+Auto,Skoda,Octavia,YZ-789-AB,Groen,2017
+Auto,Mazda,3,CD-012-EF,Wit,2018
+Auto,Subaru,Impreza,GH-345-IJ,Grijs,2021
+Auto,Suzuki,Vitara,KL-678-MN,Zwart,2019
+Auto,Volvo,XC60,OP-901-QR,Zilver,2020
+Auto,Mitsubishi,Outlander,ST-234-UV,Rood,2017
+Auto,Jeep,Wrangler,WX-567-YZ,Groen,2022
+Auto,Land Rover,Defender,YZ-890-AB,Blauw,2021
