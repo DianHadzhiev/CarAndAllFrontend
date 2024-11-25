@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation"; // For navigation
+import { useRouter } from "next/navigation";
 
 export default function IndexPage() {
     const router = useRouter();
@@ -10,11 +10,17 @@ export default function IndexPage() {
         <div style={styles.container}>
             <h1 style={styles.title}>Welcome to Car Rental</h1>
             <div style={styles.buttonContainer}>
-                <button style={styles.button} onClick={() => router.push("/register")}>
-                    Register
+                <button style={styles.button} onClick={() => router.push("/register/personal")}>
+                    Register as Personal
                 </button>
-                <button style={styles.button} onClick={() => router.push("/login")}>
-                    Login
+                <button style={styles.button} onClick={() => router.push("/register/business")}>
+                    Register as Business
+                </button>
+                <button style={styles.button} onClick={() => router.push("/login/personal")}>
+                    Login as Personal
+                </button>
+                <button style={styles.button} onClick={() => router.push("/login/business")}>
+                    Login as Business
                 </button>
             </div>
         </div>
@@ -22,13 +28,15 @@ export default function IndexPage() {
 }
 
 const styles = {
+    body:{
+        backgroundColor: "black",
+    },
     container: {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         height: "100vh",
-        textAlign: "center",
         backgroundColor: "#f4f4f4",
     },
     title: {
@@ -37,7 +45,9 @@ const styles = {
     },
     buttonContainer: {
         display: "flex",
-        gap: "20px",
+        flexWrap: "wrap",
+        gap: "15px",
+        justifyContent: "center",
     },
     button: {
         padding: "10px 20px",
