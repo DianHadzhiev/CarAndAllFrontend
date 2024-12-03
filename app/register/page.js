@@ -1,8 +1,6 @@
-//app/register/page.js
 "use client";
 
 import React, { useState } from "react";
-import Papa from "papaparse";
 
 export default function RegisterPage() {
     const [activeTab, setActiveTab] = useState("personal");
@@ -12,21 +10,39 @@ export default function RegisterPage() {
             : { companyName: "", kvkNumber: "", email: "", password: "" }
     );
     const [success, setSuccess] = useState(false);
+    const [error, setError] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const csvFile = activeTab === "personal" ? "personal_accounts.csv" : "business_accounts.csv";
-        const newData = [formData];
+        try {
+            const response = await fetch("/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    data: formData,
+                    type: activeTab, // "personal" or "business"
+                }),
+            });
 
-        Papa.unparse(newData, {
-            header: true,
-            complete: (output) => {
-                console.log(output);
-                alert(`${activeTab === "personal" ? "Personal" : "Business"} Registration successful!`);
+            if (response.ok) {
                 setSuccess(true);
-            },
-        });
+                setError("");
+                alert(`${activeTab === "personal" ? "Personal" : "Business"} registration successful!`);
+                setFormData(
+                    activeTab === "personal"
+                        ? { name: "", email: "", password: "", phone: "" }
+                        : { companyName: "", kvkNumber: "", email: "", password: "" }
+                );
+            } else {
+                const errorData = await response.json();
+                setError(errorData.message || "Registration failed.");
+            }
+        } catch (err) {
+            setError("An error occurred during registration.");
+        }
     };
 
     return (
@@ -146,6 +162,7 @@ export default function RegisterPage() {
                         Register
                     </button>
                     {success && <p className="text-green-500 mt-4">Registration Successful!</p>}
+                    {error && <p className="text-red-500 mt-4">{error}</p>}
                 </form>
             </div>
         </div>
