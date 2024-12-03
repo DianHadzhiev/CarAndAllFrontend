@@ -1,3 +1,4 @@
+//page.js
 "use client";
 
 import React from "react";
@@ -9,20 +10,6 @@ export default function IndexPage() {
     return (
         <div style={styles.container}>
             <h1 style={styles.title}>Welcome to Car Rental</h1>
-            <div style={styles.buttonContainer}>
-                <button style={styles.button} onClick={() => router.push("/register/personal")}>
-                    Register as Personal
-                </button>
-                <button style={styles.button} onClick={() => router.push("/register/business")}>
-                    Register as Business
-                </button>
-                <button style={styles.button} onClick={() => router.push("/login/personal")}>
-                    Login as Personal
-                </button>
-                <button style={styles.button} onClick={() => router.push("/login/business")}>
-                    Login as Business
-                </button>
-            </div>
         </div>
     );
 }

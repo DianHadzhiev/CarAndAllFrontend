@@ -1,15 +1,13 @@
+//layout.js
 import "./globals.css"; // Global styles
 import Header from "./components/Header"; // Import Header component
-import "./components/Header.css"; // Import Header styles
 
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
-        <body>
+        <body className="bg-blue-400 text-black">
         <Header />
-        <div className="container">
-            <main>{children}</main>
-        </div>
+        <main>{children}</main>
         </body>
         </html>
     );
