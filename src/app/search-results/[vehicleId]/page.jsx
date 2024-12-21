@@ -1,4 +1,4 @@
-import VehicelDetail from "../../components/VehicleDetail";
+import VehicleDetail from "../../components/VehicleDetail";
 import { cookies } from "next/headers";
 import axios from "axios";
 
@@ -7,12 +7,12 @@ export default async function VehicleDetailPage({ params, searchParams}) {
     const cookieStore = await cookies();
     const token = cookieStore.get("accessToken")?.value;
     
-    const searchParamsObj = new URLSearchParams(await searchParams);
-    const paramsObj = await params;
+    const searchParamsObj = await searchParams;
+    const paramsObj =  await params;
 
-    const type = searchParamsObj.get('type') || '';
-    const pickupDate = searchParamsObj.get('pickupDate') || '';
-    const returnDate = searchParamsObj.get('returnDate') || '';
+    const type = searchParamsObj.type || '';
+    const pickupDate = searchParamsObj.pickupDate || '';
+    const returnDate = searchParamsObj.returnDate || '';
     const vehicleId = paramsObj.vehicleId || '';
 
     if (!vehicleId || !type || !pickupDate || !returnDate) {
@@ -26,7 +26,7 @@ export default async function VehicleDetailPage({ params, searchParams}) {
     }
 
     try {
-      const response = await axios.get(`http://localhost:5279/api/Voertuig`, {
+      const response = await axios.get(`http://localhost:5279/api/Voertuig/vehicleData`, {
         params: {
           id: vehicleId,  
           pickupDate: pickupDate,
