@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 export default async function SearchResultPage({searchParams}) {
 
-  const {type, pickupDate, returnDate} = searchParams;
+  const {type, pickupDate, returnDate} = await searchParams;
 
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
