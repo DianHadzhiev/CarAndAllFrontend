@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuth } from "@/src/app/context/AuthContext";
 import { useRouter } from "next/navigation";
 
 export const SearchBar = () => {

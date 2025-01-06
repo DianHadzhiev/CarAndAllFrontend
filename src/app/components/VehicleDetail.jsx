@@ -1,6 +1,4 @@
-'use client'
-
-export default function VehicleDetail({ vehicle, pickupDate, returnDate }) {
+export default function VehicleDetail({ vehicle, pickupDate, returnDate, handleBooking}) {
     return (
       <div className="max-w-screen-lg mx-auto mt-8 p-4">
         <div className="bg-white shadow rounded-lg p-6">
@@ -15,13 +13,15 @@ export default function VehicleDetail({ vehicle, pickupDate, returnDate }) {
               <p><strong>Kenteken:</strong> {vehicle.kenteken}</p>
               <p><strong>Kleur:</strong> {vehicle.kleur}</p>
               <p><strong>Bouwjaar:</strong> {vehicle.bouwjaar}</p>
-            </div>
-            
+            </div>  
             <div>
               <h2 className="font-semibold">Rental Period</h2>
               <p><strong>Pick-up Date:</strong> {pickupDate}</p>
               <p><strong>Return Date:</strong> {returnDate}</p>
             </div>
+            <button onClick={handleBooking}>
+              Reserveer nu
+            </button>
           </div>
         </div>
       </div>

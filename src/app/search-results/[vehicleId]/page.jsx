@@ -1,73 +1,31 @@
-import VehicleDetail from "../../components/VehicleDetail";
-import { cookies } from "next/headers";
-import axios from "axios";
 
-export default async function VehicleDetailPage({ params, searchParams}) {
+import { fetchVehicle } from "../../lib/api";
+import VehicleDetailClient from "./vehicleDetailClient";
 
-    const cookieStore = await cookies();
-    const token = cookieStore.get("accessToken")?.value;
+export default async function VehicleDetailPage({ params, searchParams }) {
+  const { vehicleId } = await params;
+  const { type, pickupDate, returnDate } = await searchParams;
+
+  // Validate required parameters
+  if (!vehicleId || !type || !pickupDate || !returnDate) {
+    throw new Error('Missing required parameters');
+  }
+
+  try {
+    const response = await fetchVehicle(vehicleId, pickupDate, returnDate, type);
     
-    const searchParamsObj = await searchParams;
-    const paramsObj =  await params;
-
-    const type = searchParamsObj.type || '';
-    const pickupDate = searchParamsObj.pickupDate || '';
-    const returnDate = searchParamsObj.returnDate || '';
-    const vehicleId = paramsObj.vehicleId || '';
-
-    if (!vehicleId || !type || !pickupDate || !returnDate) {
-        return (
-          <div className="max-w-screen-lg mx-auto mt-8 p-4">
-            <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded">
-              Missing required parameters
-            </div>
-          </div>
-        );
+    return (
+      <VehicleDetailClient 
+        initialVehicle={response.data} 
+        pickupDate={pickupDate} 
+        returnDate={returnDate} 
+      />
+    );
+  } catch (error) {
+    if (error.response?.status === 404) {
+      
     }
-
-    try {
-      const response = await axios.get(`http://localhost:5279/api/Voertuig/vehicleData`, {
-        params: {
-          id: vehicleId,  
-          pickupDate: pickupDate,
-          returnDate: returnDate,
-          type: type
-        },
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      return (
-        <VehicleDetail
-          vehicle={response.data}
-          pickupDate={pickupDate}
-          returnDate={returnDate}
-        />
-      );
-
-    } catch (error) {
-        console.error("API Error:", error.response?.status, error.response?.data);
     
-        const errorMessage =
-          error.response?.status === 404
-            ? "Vehicle not found. It may have been removed or is no longer available."
-            : "Error loading vehicle details. Please try again later.";
-    
-        return (
-          <div className="max-w-screen-lg mx-auto mt-8 p-4">
-            <div
-              className={`${
-                error.response?.status === 404
-                  ? "bg-yellow-50 border-yellow-200 text-yellow-700"
-                  : "bg-red-50 border-red-200 text-red-700"
-              } px-4 py-3 rounded`}
-            >
-              {errorMessage}
-            </div>
-          </div>
-        );
-    }
+    throw error;
+  }
 }
-

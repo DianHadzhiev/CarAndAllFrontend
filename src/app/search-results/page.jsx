@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 export default async function SearchResultPage({searchParams}) {
 
-  const {type, pickupDate, returnDate} = searchParams;
+  const {type, pickupDate, returnDate} = await searchParams;
 
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
@@ -37,7 +37,7 @@ export default async function SearchResultPage({searchParams}) {
 
   return (
     <div className="">
-      <h1 className="text-xl font-bold mt-8">Zoekresultaten</h1>
+      <h1 className="text-xl font-bold mt-8 mb-4"> {initialResults.length} Zoekresultaten</h1>
         <SearchResults initialResults={initialResults}  searchParams={searchParams} handleDealClick={handleDealClick}/>
     </div>
   );

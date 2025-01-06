@@ -1,9 +1,5 @@
 
 import SearchBar from "./components/SearchBar";
-import { cookies } from "next/headers.js";
-import { jwtDecode } from "jwt-decode";
-import { useAuth } from "../context/AuthContext";
-
 
 export default function Home() {
     
