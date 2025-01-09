@@ -13,7 +13,7 @@ export async function checkAuth() {
   } catch (error) {
     if (error.response?.status === 401) {
       try {
-        const refreshResponse = await apiClient.post('api/auth/refreshToken');
+        const refreshResponse = await apiClient.post('/api/auth/refreshToken');
         if (!refreshResponse.data) {
           throw new Error('Refresh token invalid or expired');
         }
@@ -33,10 +33,11 @@ export async function checkAuth() {
 }
 
 export async function login(credentials) {
+  
   try {
     const url = credentials.type === "personal"
-      ? 'api/auth/login'
-      : 'api/auth/loginBedrijf';
+      ? '/api/auth/login'
+      : '/api/auth/loginBedrijf';
     const response = await apiClient.post(url, {
       Email: credentials.email,
       Password: credentials.password
@@ -53,12 +54,13 @@ export async function login(credentials) {
 
 export async function logout() {
   try {
-    await apiClient.post('api/auth/logout');
+    await apiClient.post('/api/auth/logout');
   } catch (error) {
     console.error('Logout error:', error);
     throw new Error(error.response?.data?.message || error.message || 'Logout failed');
   }
 }
+
 
 export const fetchVehicle = async (vehicleId, pickupDate, returnDate, type) => {
   try {
@@ -89,8 +91,20 @@ export const submitHuuraanvraag = async (vehicleId, userId, email, pickupDate, r
     });
   };
 
-export async function register(){
-  await apiClient.post('/api/Register/Particulier', {
-
-  });
-}
+  export async function register(data) {
+    try {
+      const response = await apiClient.post('/api/Register/Particulier', {
+        VoorNaam: data.voorNaam,
+        AchterNaam: data.achterNaam,
+        Email: data.email,
+        Password: data.password,
+        TelefoonNummer: data.telefoonNummer,
+        StraatHuisnummer: data.straatHuisnummer,
+        Postcode: data.postcode,
+        Kvk: data.kvk || "string"
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.Message || "An error occurred during registration";
+    }
+  }

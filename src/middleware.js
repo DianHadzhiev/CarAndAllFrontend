@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 
 export function middleware(request){
 
-    const accesToken = request.cookies.get('accesToken')?.value;
+    const accesToken = request.cookies.get('accesToken')?.value; //werkt niet
 
     const publicPaths = ['/login', '/register', '/'];
 
