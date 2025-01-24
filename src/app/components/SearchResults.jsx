@@ -1,8 +1,9 @@
 'use client'
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
-export default function SearchResults({initialResults, handleDealClick}) {
+export default function SearchResults({ initialResults, handleDealClick }) {
     const [results, setResults] = useState(initialResults);
     const [filters, setFilters] = useState({
         prijsPerDag: null,
@@ -10,6 +11,14 @@ export default function SearchResults({initialResults, handleDealClick}) {
         model: [],
         kleur: []
     });
+
+    const getDefaultImage = (category) => {
+        const lowerCategory = category.toLowerCase();
+        if (lowerCategory.includes('auto')) return '/images/car.png';
+        if (lowerCategory.includes('caravan')) return '/images/caravan.png';
+        if (lowerCategory.includes('camper')) return '/images/camper.png';
+        return '/images/car.png'; // fallback image
+    };
 
 
     const onDealClick = useCallback((vehicleId, categorie) => {
@@ -34,7 +43,7 @@ export default function SearchResults({initialResults, handleDealClick}) {
     };
 
     return (
-        <div className='container px-4container max-w-200'>
+        <div className='container px-4 container max-w-200'>
             <div className="flex flex-col gap-4 mb-6">
                 <input
                     type="range"
@@ -72,34 +81,49 @@ export default function SearchResults({initialResults, handleDealClick}) {
                     onClick={applyFilters}
                     className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
                 >
-                    Apply Filters
+                    Filters Toepassen
                 </button>
             </div>
             {results.length === 0 ? (
-                <p className="text-gray-600">No vehicles found matching your search criteria.</p>
+                <p className="text-gray-600">Geen voertuigen gevonden die aan uw zoekcriteria voldoen.</p>
             ) : (
-                <div className="flex flex-col gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {results.map((vehicle, index) => (
                         <div
                             key={index}
-                            className="w-full p-6 border rounded bg-gray-50 shadow-sm hover:shadow-md transition"
+                            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300"
                         >
-                            <h1><strong>{vehicle.merk} {vehicle.model}</strong></h1>
-                            <p><strong>Kenteken:</strong> {vehicle.kenteken}</p>
-                            <p><strong>Kleur:</strong> {vehicle.kleur}</p>
-                            <p><strong>Aanschafjaar:</strong> {vehicle.bouwjaar}</p>
-                            <p><strong>Prijs per dag:</strong> €{vehicle.prijsPerDag}</p>
-                            <form onSubmit={(e) =>{e.preventDefault();
-                                onDealClick(vehicle.id, vehicle.categorie)
-                            }}>
-                            
-                                <button
-                                    type='sumbit'
-                                    className="mt-2  px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                                >
-                                    Toon deal
-                                </button>
-                            </form>
+                            <div className="relative h-48 w-full">
+                                <Image
+                                    src={getDefaultImage(vehicle.categorie)}
+                                    alt={`${vehicle.merk} ${vehicle.model}`}
+                                    fill
+                                    style={{ objectFit: 'cover' }}
+                                    className="transition-transform duration-300 hover:scale-105"
+                                />
+                            </div>
+                            <div className="p-6">
+                                <h2 className="text-xl font-bold mb-2">{vehicle.merk} {vehicle.model}</h2>
+                                <div className="space-y-2 text-gray-600">
+                                    <p><strong>Kenteken:</strong> {vehicle.kenteken}</p>
+                                    <p><strong>Kleur:</strong> {vehicle.kleur}</p>
+                                    <p><strong>Bouwjaar:</strong> {vehicle.bouwjaar}</p>
+                                    <p className="text-lg font-semibold text-blue-600">
+                                        €{vehicle.prijsPerDag}/dag
+                                    </p>
+                                </div>
+                                <form onSubmit={(e) => {
+                                    e.preventDefault();
+                                    handleDealClick(vehicle.id, vehicle.categorie);
+                                }} className="mt-4">
+                                    <button
+                                        type="submit"
+                                        className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                                    >
+                                        Details Bekijken
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     ))}
                 </div>

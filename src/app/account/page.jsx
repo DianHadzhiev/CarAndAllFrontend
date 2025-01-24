@@ -1,58 +1,79 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import Roles from "../account/Roles";
+import Roles from '../account/Roles';
+
+import UserEditForm from '../components/UserEditForm';
+import FrontofficeVehicleList from '../components/FrontofficeVehicleList';
 
 export default function AccountPage() {
     const { user, apiClient } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const [userData, setUserData] = useState(null);
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [medewerkers, setMedewerkers] = useState([]);
+    const [newMedewerkerEmail, setNewMedewerkerEmail] = useState('');
+    const [gehuurdeVoertuigen, setGehuurdeVoertuigen] = useState([]);
+    const [abonnementType, setAbonnementType] = useState('');
+    const [abonnementDuur, setAbonnementDuur] = useState(12);
+    const [abonnementAanvragen, setAbonnementAanvragen] = useState([]);
+    const [rentalHistory, setRentalHistory] = useState([]);
+    const [isLoadingRentalHistory, setIsLoadingRentalHistory] = useState(false);
+    const [rentalHistoryError, setRentalHistoryError] = useState(null);
 
     //user.role = Roles.medewerker;
-    user.role = Roles.particulier;
+    //user.role = Roles.particulier;
     //user.role = Roles.frontoffice;
     //user.role = Roles.backoffice;
     //user.role = Roles.bedrijf;
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const initializeUser = async () => {
             try {
-                let endpoint = '';
-                if (user?.role === Roles.particulier) {
-                    endpoint = '/api/User/GetUserData';
-                } else if (user?.role === 'bedrijf') {
-                    endpoint = '/api/User/GetBusinessData';
-                } else if (user?.role === Roles.medewerker || user?.role === Roles.frontoffice || user?.role === Roles.backoffice) {
-                    endpoint = '/api/User/GetEmployeeData';
+                const response = await apiClient.get('/api/auth/AuthMe');
+                if (response.status === 200) {
+                    const { role } = response.data;
+                    // user.role = role;
+                    user.role = Roles.bedrijf; // Assign role dynamically
+
                 }
-    
-                if (endpoint) {
-                    const response = await apiClient.get(endpoint);
-                    console.log('API Response:', response.data);
+            } catch (error) {
+                console.error('Error fetching user role:', error);
+                setError('Failed to fetch user role.');
+            }
+        };
+
+        if (apiClient) {
+            initializeUser();
+        }
+    }, [apiClient, user]);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            if (user?.email) {
+                setIsLoading(true);
+                try {
+                    const response = await apiClient.get(`api/User/GetUserData?email=${user.email}`, {
+                        withCredentials: true,
+                    });
                     if (response.status === 200) {
                         setUserData(response.data);
                     } else {
-                        console.error('Unexpected response:', response);
-                        alert('Er is een fout opgetreden bij het ophalen van gebruikersgegevens.');
+                        setError('Failed to fetch user data');
                     }
+                } catch (err) {
+                    console.error('Error fetching user data:', err);
+                    setError(err.message || 'An error occurred while fetching user data');
+                } finally {
+                    setIsLoading(false);
                 }
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-                alert('Er is een fout opgetreden bij het ophalen van gebruikersgegevens.');
             }
         };
-    
-        if (user) {
-            fetchUserData();
-        }
+
+        fetchUserData();
     }, [user, apiClient]);
 
-
-
-    const [medewerkers, setMedewerkers] = useState([]);
-    const [newMedewerkerEmail, setNewMedewerkerEmail] = useState('');
-
-    // Fetch employees for bedrijf
     useEffect(() => {
         const fetchMedewerkers = async () => {
             if (user?.role === 'bedrijf') {
@@ -86,9 +107,6 @@ export default function AccountPage() {
         }
     };
 
-
-    const [gehuurdeVoertuigen, setGehuurdeVoertuigen] = useState([]);
-
     useEffect(() => {
         const fetchGehuurdeVoertuigen = async () => {
             if (user?.role === 'bedrijf') {
@@ -104,78 +122,108 @@ export default function AccountPage() {
         fetchGehuurdeVoertuigen();
     }, [user, apiClient]);
 
-    {
-        activeTab === 'gehuurde-voertuigen' && (
-            <div>
-                <h3 className="text-lg font-medium">Gehuurde Voertuigen</h3>
-                <p>Bekijk voertuigen die door medewerkers zijn gehuurd.</p>
-                <div className="mt-4">
-                    {gehuurdeVoertuigen.map((voertuig) => (
-                        <div key={voertuig.Id} className="p-4 border rounded bg-gray-50 mb-4">
-                            <p><strong>Kenteken:</strong> {voertuig.Kenteken}</p>
-                            <p><strong>Merk:</strong> {voertuig.Merk}</p>
-                            <p><strong>Model:</strong> {voertuig.Model}</p>
-                            <p><strong>Huurperiode:</strong> {new Date(voertuig.Start).toLocaleDateString()} - {new Date(voertuig.Einde).toLocaleDateString()}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        )
-    }
+    // const handleAbonnementAanvraag = async (e) => {
+    //     e.preventDefault();
+    //     try {
+    //         if (!userData || !userData.Kvk) {
+    //             throw new Error('Bedrijf gegevens niet beschikbaar');
+    //         }
 
-    const [abonnementType, setAbonnementType] = useState('');
-    const [abonnementDuur, setAbonnementDuur] = useState(12); // Default duration in months
+    //         const response = await apiClient.post('/api/Abonnement/Create_Abonnementen', {
+    //             idBedrijf: userData.Kvk,
+    //             idAbonnement: abonnementType,
+    //             duurInMaanden: parseInt(abonnementDuur)
+    //         });
+
+    //         if (response.status === 200) {
+    //             alert('Abonnement aanvraag succesvol ingediend! De aanvraag wordt beoordeeld.');
+    //             // Refresh the list of pending requests
+    //             const aanvragenResponse = await apiClient.get('/api/Abonnement/GetAbonnementAanvragen');
+    //             if (aanvragenResponse.status === 200) {
+    //                 setAbonnementAanvragen(aanvragenResponse.data);
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error('Error submitting subscription request:', error);
+    //         const errorMessage = error.response?.data || 'Er is een fout opgetreden bij het indienen van de aanvraag.';
+    //         alert(`Er is een fout opgetreden: ${errorMessage}`);
+    //     }
+    // };
+
+    useEffect(() => {
+        const fetchAbonnementAanvragen = async () => {
+            if (user?.role === Roles.medewerker ||
+                user?.role === Roles.frontoffice ||
+                user?.role === Roles.backoffice) {
+                setIsLoading(true);
+                try {
+                    const response = await apiClient.get('api/Abonnement/GetAbonnementAanvragen', {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                        }
+                    });
+                    if (response.status === 200) {
+                        setAbonnementAanvragen(response.data);
+                    }
+                } catch (error) {
+                    console.error('Error fetching subscription requests:', error);
+                    setError('Er is een fout opgetreden bij het ophalen van de aanvragen.');
+                } finally {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        fetchAbonnementAanvragen();
+    }, [user, apiClient]);
+
+    useEffect(() => {
+        const fetchBusinessData = async () => {
+            if (user?.role === 'bedrijf') {
+                try {
+                    const response = await apiClient.get('api/User/GetBusinessData');
+                    if (response.status === 200) {
+                        setUserData(prevData => ({
+                            ...prevData,
+                            ...response.data,
+                            KvkNummer: response.data.KvkNummer // Ensure this matches the database field
+                        }));
+                    }
+                } catch (error) {
+                    console.error('Error fetching business data:', error);
+                    setError('Failed to fetch business data');
+                }
+            }
+        };
+
+        fetchBusinessData();
+    }, [user, apiClient]);
 
     const handleAbonnementAanvraag = async (e) => {
         e.preventDefault();
         try {
+            // Get the user's KvK number from userData
+            if (!userData || !userData.KvkNummer) {
+                console.error('KvK nummer not found in user data');
+                alert('Bedrijfsgegevens niet gevonden. Neem contact op met de beheerder.');
+                return;
+            }
+
             const response = await apiClient.post('/api/Abonnement/Create_Abonnementen', {
-                idBedrijf: user.KvkNummer, // Assuming the business user's KvK number is stored in the user object
+                idBedrijf: userData.KvkNummer,  // This should match the KvkNummer from Bedrijven table
                 idAbonnement: abonnementType,
-                duurInMaanden: abonnementDuur,
+                duurInMaanden: parseInt(abonnementDuur)
             });
+
             if (response.status === 200) {
                 alert('Abonnement aanvraag succesvol ingediend!');
+                // Optionally refresh the page or the abonnement list
+                window.location.reload();
             }
         } catch (error) {
             console.error('Error submitting subscription request:', error);
-            alert('Er is een fout opgetreden bij het indienen van de aanvraag.');
-        }
-    };
-
-    const [abonnementAanvragen, setAbonnementAanvragen] = useState([]);
-
-    useEffect(() => {
-        const fetchAbonnementAanvragen = async () => {
-            try {
-                const response = await apiClient.get('/api/Abonnement/GetAbonnementAanvragen');
-                setAbonnementAanvragen(response.data);
-            } catch (error) {
-                console.error('Error fetching subscription requests:', error);
-            }
-        };
-
-        if (user?.role === Roles.medewerker || user?.role === Roles.frontoffice || user?.role === Roles.backoffice) {
-            fetchAbonnementAanvragen();
-        }
-    }, [user, apiClient]);
-
-
-    const handleApproveOrReject = async (aanvraagId, isApproved) => {
-        try {
-            const response = await apiClient.post('/api/Abonnement/ApproveOrRejectAbonnement', {
-                aanvraagId,
-                isApproved,
-            });
-            if (response.status === 200) {
-                alert(`Aanvraag ${isApproved ? 'goedgekeurd' : 'afgewezen'}`);
-                // Refresh the list of subscription requests
-                const updatedAanvragen = await apiClient.get('/api/Abonnement/GetAbonnementAanvragen');
-                setAbonnementAanvragen(updatedAanvragen.data);
-            }
-        } catch (error) {
-            console.error('Error approving/rejecting subscription request:', error);
-            alert('Er is een fout opgetreden bij het goedkeuren/afwijzen van de aanvraag.');
+            const errorMessage = error.response?.data || 'Er is een fout opgetreden bij het indienen van de aanvraag.';
+            alert(errorMessage);
         }
     };
 
@@ -187,7 +235,6 @@ export default function AccountPage() {
             });
             if (response.status === 200) {
                 alert(`Abonnement rechten ${heeftRechten ? 'toegekend' : 'ingetrokken'}`);
-                // Refresh the list of employees
                 const updatedMedewerkers = await apiClient.get('/api/User/GetMedewerkers');
                 setMedewerkers(updatedMedewerkers.data);
             }
@@ -197,19 +244,56 @@ export default function AccountPage() {
         }
     };
 
+    useEffect(() => {
+        const fetchRentalHistory = async () => {
+            if (user?.role === Roles.particulier && activeTab === 'huurgeschiedenis') {
+                setIsLoadingRentalHistory(true);
+                setRentalHistoryError(null);
 
-    const handleSave = async () => {
-        try {
-            const response = await apiClient.put('/api/User/UpdateUser', userData);
-            if (response.status === 200) {
-                alert('Gegevens succesvol opgeslagen!');
-                setActiveTab('persoonlijke-info');
+                try {
+                    const response = await apiClient.get('/api/Aanvraag/GetHuurAanvragen');
+                    if (response.status === 200) {
+                        const filteredRentalHistory = response.data.filter(
+                            (rental) => rental.HuurderId === user.Id
+                        );
+                        setRentalHistory(filteredRentalHistory);
+                    }
+                } catch (error) {
+                    console.error('Error fetching rental history:', error);
+                    setRentalHistoryError('Er is een fout opgetreden bij het ophalen van de huurgeschiedenis.');
+                } finally {
+                    setIsLoadingRentalHistory(false);
+                }
             }
-        } catch (error) {
-            console.error('Error updating user data:', error);
-            alert('Er is een fout opgetreden bij het opslaan van de gegevens.');
-        }
-    };
+        };
+
+        fetchRentalHistory();
+    }, [user, activeTab, apiClient]);
+
+
+    const [notifications, setNotifications] = useState([]);
+    const [lastNotificationCheck, setLastNotificationCheck] = useState(new Date());
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            if (user?.role === 'bedrijf') {
+                try {
+                    const response = await apiClient.get('/api/Notificatie/GetNotificaties');
+                    if (response.status === 200) {
+                        setNotifications(response.data);
+                        setLastNotificationCheck(new Date());
+                    }
+                } catch (error) {
+                    console.error('Error fetching notifications:', error);
+                }
+            }
+        };
+
+        fetchNotifications();
+        const intervalId = setInterval(fetchNotifications, 30000);
+
+        return () => clearInterval(intervalId);
+    }, [user, apiClient]);
 
 
 
@@ -221,7 +305,6 @@ export default function AccountPage() {
                 <div className="bg-white p-6 rounded-lg shadow-md">
                     <h2 className="text-xl font-semibold mb-4">Menu</h2>
                     <ul className="space-y-2">
-                        {/* Dashboard Tab */}
                         <li>
                             <button
                                 className={`w-full text-left p-2 hover:bg-gray-100 rounded ${activeTab === 'dashboard' ? 'bg-blue-100' : ''}`}
@@ -231,7 +314,6 @@ export default function AccountPage() {
                             </button>
                         </li>
 
-                        {/* Individual (Particulier) */}
                         {user?.role === Roles.particulier && (
                             <>
                                 <li>
@@ -253,7 +335,6 @@ export default function AccountPage() {
                             </>
                         )}
 
-                        {/* Business */}
                         {user?.role === 'bedrijf' && (
                             <>
                                 <li>
@@ -296,10 +377,17 @@ export default function AccountPage() {
                                         Bedrijfsinformatie
                                     </button>
                                 </li>
+                                <li>
+                                    <button
+                                        className={`w-full text-left p-2 hover:bg-gray-100 rounded ${activeTab === 'persoonlijke-info' ? 'bg-blue-100' : ''}`}
+                                        onClick={() => setActiveTab('persoonlijke-info')}
+                                    >
+                                        Persoonlijke Info
+                                    </button>
+                                </li>
                             </>
                         )}
 
-                        {/* Employee (Medewerker, Frontoffice, Backoffice) */}
                         {(user?.role === Roles.medewerker || user?.role === Roles.frontoffice || user?.role === Roles.backoffice) && (
                             <>
                                 <li>
@@ -342,6 +430,16 @@ export default function AccountPage() {
                                         Rapporten & Analyse
                                     </button>
                                 </li>
+
+                                <li>
+                                    <button
+                                        className={`w-full text-left p-2 hover:bg-gray-100 rounded ${activeTab === 'persoonlijke-info' ? 'bg-blue-100' : ''}`}
+                                        onClick={() => setActiveTab('persoonlijke-info')}
+                                    >
+                                        Persoonlijke Info
+                                    </button>
+                                </li>
+
                             </>
                         )}
                     </ul>
@@ -351,7 +449,6 @@ export default function AccountPage() {
                 <div className="col-span-2 bg-white p-6 rounded-lg shadow-md">
                     <h2 className="text-xl font-semibold mb-4">Welkom, {user?.email}</h2>
                     <div className="space-y-4">
-                        {/* Dashboard Tab */}
                         {activeTab === 'dashboard' && (
                             <div>
                                 <h3 className="text-lg font-medium">Dashboard</h3>
@@ -361,13 +458,11 @@ export default function AccountPage() {
                                         <button className="bg-blue-500 text-white px-4 py-2 rounded">Voertuig huren</button>
                                         <button className="bg-green-500 text-white px-4 py-2 rounded ml-2">Abonnement verlengen</button>
                                         <p className="mt-4">Lopende verhuringen:</p>
-                                        {/* Display ongoing rentals */}
                                     </>
                                 )}
                                 {user?.role === 'bedrijf' && (
                                     <>
                                         <p>Overzicht van actieve abonnementen en lopende verhuringen:</p>
-                                        {/* Display active subscriptions and rentals */}
                                         <button className="bg-blue-500 text-white px-4 py-2 rounded">Medewerker toevoegen</button>
                                         <button className="bg-green-500 text-white px-4 py-2 rounded ml-2">Abonnement verlengen</button>
                                     </>
@@ -375,162 +470,214 @@ export default function AccountPage() {
                                 {(user?.role === Roles.medewerker || user?.role === Roles.frontoffice || user?.role === Roles.backoffice) && (
                                     <>
                                         <p>Openstaande taken:</p>
-                                        {/* Display pending tasks */}
                                         <p>Systeemstatus:</p>
-                                        {/* Display system status */}
                                     </>
                                 )}
                             </div>
                         )}
 
-                        {/* Individual (Particulier) */}
                         {activeTab === 'huurgeschiedenis' && (
                             <div>
                                 <h3 className="text-lg font-medium">Huurgeschiedenis</h3>
                                 <p>Hier kunt u uw eerdere en huidige verhuringen bekijken.</p>
-                                {/* Display rental history */}
+
+                                {isLoadingRentalHistory ? (
+                                    <p className="text-gray-600">Laden...</p>
+                                ) : rentalHistoryError ? (
+                                    <p className="text-red-500">{rentalHistoryError}</p>
+                                ) : rentalHistory.length > 0 ? (
+                                    <div className="mt-4">
+                                        {rentalHistory.map((rental) => (
+                                            <div key={rental.Id} className="p-4 border rounded bg-gray-50 mb-4">
+                                                <p><strong>Voertuig ID:</strong> {rental.IdVoertuig}</p>
+                                                <p><strong>Startdatum:</strong> {new Date(rental.Start).toLocaleDateString()}</p>
+                                                <p><strong>Einddatum:</strong> {new Date(rental.Einde).toLocaleDateString()}</p>
+                                                <p><strong>Status:</strong> {rental.Status}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-600">Geen huurgeschiedenis gevonden.</p>
+                                )}
+                            </div>
+                        )}
+
+                        {activeTab === 'persoonlijke-info' && (
+                            <div>
+                                <h3 className="text-lg font-medium">Persoonlijke Info</h3>
+                                <div className="bg-white shadow rounded-lg p-6">
+                                    <h2 className="text-xl font-semibold mb-4">Gebruiker Data</h2>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Voornaam</label>
+                                            <p className="mt-1 text-sm text-gray-900">{userData?.voornaam}</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Achternaam</label>
+                                            <p className="mt-1 text-sm text-gray-900">{userData?.achternaam}</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Email</label>
+                                            <p className="mt-1 text-sm text-gray-900">{userData?.emailAddress}</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Telefoon Nummer</label>
+                                            <p className="mt-1 text-sm text-gray-900">{userData?.telefoonNummer}</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Adres</label>
+                                            <p className="mt-1 text-sm text-gray-900">{userData?.straatHuisnummer}</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Postcode</label>
+                                            <p className="mt-1 text-sm text-gray-900">{userData?.postcode}</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Rol</label>
+                                            <p className="mt-1 text-sm text-gray-900">{userData?.role}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'persoonlijke-info' && (
+                            <div>
+                                <h3 className="text-lg font-medium">Persoonlijke Info</h3>
+                                <div className="bg-white shadow rounded-lg p-6">
+                                    <UserEditForm
+                                        userData={userData}
+                                        onUpdate={(updatedData) => {
+                                            setUserData({
+                                                ...userData,
+                                                ...updatedData
+                                            });
+                                        }}
+                                    />
+                                </div>
                             </div>
                         )}
 
 
-
-                        {
-                            activeTab === 'persoonlijke-info' && (
-                                <div>
-                                    <h3 className="text-lg font-medium">Persoonlijke Info</h3>
-                                    <form>
-                                        <label>Voornaam:</label>
-                                        <input
-                                            type="text"
-                                            className="border p-2 w-full"
-                                            value={userData?.Voornaam || ''}
-                                            onChange={(e) => setUserData({ ...userData, Voornaam: e.target.value })}
-                                        />
-                                        <label>Achternaam:</label>
-                                        <input
-                                            type="text"
-                                            className="border p-2 w-full"
-                                            value={userData?.Achternaam || ''}
-                                            onChange={(e) => setUserData({ ...userData, Achternaam: e.target.value })}
-                                        />
-                                        <label>E-mail:</label>
-                                        <input
-                                            type="email"
-                                            className="border p-2 w-full"
-                                            value={userData?.EmailAddress || ''}
-                                            readOnly
-                                        />
-                                        <label>Telefoonnummer:</label>
-                                        <input
-                                            type="tel"
-                                            className="border p-2 w-full"
-                                            value={userData?.TelefoonNummer || ''}
-                                            onChange={(e) => setUserData({ ...userData, TelefoonNummer: e.target.value })}
-                                        />
-                                        <label>Adres:</label>
-                                        <input
-                                            type="text"
-                                            className="border p-2 w-full"
-                                            value={userData?.StraatHuisnummer || ''}
-                                            onChange={(e) => setUserData({ ...userData, StraatHuisnummer: e.target.value })}
-                                        />
-                                        <label>Postcode:</label>
-                                        <input
-                                            type="text"
-                                            className="border p-2 w-full"
-                                            value={userData?.Postcode || ''}
-                                            onChange={(e) => setUserData({ ...userData, Postcode: e.target.value })}
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={handleSave}
-                                            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-                                        >
-                                            Opslaan
-                                        </button>
-                                    </form>
+                        {activeTab === 'abonnementsbeheer' && (
+                            <div>
+                                <h3 className="text-lg font-medium">Abonnementsbeheer</h3>
+                                {/* Add subscription type descriptions */}
+                                <div className="mb-6 p-4 bg-gray-50 rounded">
+                                    <h4 className="font-medium mb-2">Beschikbare Abonnementen:</h4>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <h5 className="font-medium">Pay As You Go</h5>
+                                            <p>Maandelijks vast bedrag met korting op huurtarieven</p>
+                                        </div>
+                                        <div>
+                                            <h5 className="font-medium">Prepaid</h5>
+                                            <p>Vooraf betaald pakket met vast aantal huurdagen</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            )
-                        }
 
+                                <form onSubmit={handleAbonnementAanvraag}>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Abonnement Type:
+                                    </label>
+                                    <select
+                                        value={abonnementType}
+                                        onChange={(e) => setAbonnementType(e.target.value)}
+                                        className="w-full p-2 border rounded mb-4"
+                                        required
+                                    >
+                                        <option value="">Selecteer type</option>
+                                        <option value="pay-as-you-go">Pay As You Go</option>
+                                        <option value="prepaid">Prepaid</option>
+                                    </select>
 
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Duur in maanden:
+                                    </label>
+                                    <select
+                                        value={abonnementDuur}
+                                        onChange={(e) => setAbonnementDuur(e.target.value)}
+                                        className="w-full p-2 border rounded mb-4"
+                                        required
+                                    >
+                                        <option value="12">12 maanden</option>
+                                        <option value="24">24 maanden</option>
+                                        <option value="36">36 maanden</option>
+                                    </select>
 
+                                    <button
+                                        type="submit"
+                                        className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                                    >
+                                        Aanvragen
+                                    </button>
+                                </form>
 
-
-                        {/* Business */}{
-                            activeTab === 'abonnementsbeheer' && (
-                                <div>
-                                    <h3 className="text-lg font-medium">Abonnementsbeheer</h3>
-                                    <form onSubmit={handleAbonnementAanvraag}>
-                                        <label>Nieuw abonnement aanvragen:</label>
-                                        <select
-                                            value={abonnementType}
-                                            onChange={(e) => setAbonnementType(e.target.value)}
-                                            className="border p-2 w-full"
-                                            required
-                                        >
-                                            <option value="">Selecteer abonnementstype</option>
-                                            <option value="abonnement1">Pay As You Go</option>
-                                            <option value="abonnement2">Prepaid</option>
-                                        </select>
-                                        <label>Duur in maanden:</label>
-                                        <input
-                                            type="number"
-                                            value={abonnementDuur}
-                                            onChange={(e) => setAbonnementDuur(e.target.value)}
-                                            className="border p-2 w-full"
-                                            required
-                                        />
-                                        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4">
-                                            Aanvragen
-                                        </button>
-                                    </form>
-                                    <p>Bestaande abonnementen:</p>
-                                    {/* Display existing subscriptions if needed */}
-                                </div>
-                            )
-                        }
-                        {
-                            activeTab === 'medewerkerbeheer' && (
-                                <div>
-                                    <h3 className="text-lg font-medium">Medewerkerbeheer</h3>
-                                    <form onSubmit={handleAddMedewerker}>
-                                        <label>Medewerker toevoegen:</label>
-                                        <input
-                                            type="email"
-                                            className="border p-2 w-full"
-                                            placeholder="E-mailadres"
-                                            value={newMedewerkerEmail}
-                                            onChange={(e) => setNewMedewerkerEmail(e.target.value)}
-                                        />
-                                        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4">
-                                            Toevoegen
-                                        </button>
-                                    </form>
-                                    <p>Medewerkersoverzicht:</p>
-                                    <div className="mt-4">
-                                        {medewerkers.map((medewerker) => (
-                                            <div key={medewerker.id} className="p-4 border rounded bg-gray-50 mb-4">
-                                                <p><strong>Naam:</strong> {medewerker.Voornaam} {medewerker.Achternaam}</p>
-                                                <p><strong>E-mail:</strong> {medewerker.EmailAddress}</p>
-                                                <button
-                                                    onClick={() => handleUpdateAbonnementRechten(medewerker.id, !medewerker.HeeftAbonnementRechten)}
-                                                    className={`mt-2 px-4 py-2 rounded ${medewerker.HeeftAbonnementRechten ? 'bg-red-500' : 'bg-green-500'} text-white`}
-                                                >
-                                                    {medewerker.HeeftAbonnementRechten ? 'Rechten intrekken' : 'Rechten toekennen'}
-                                                </button>
+                                {/* Show pending requests */}
+                                {abonnementAanvragen.length > 0 && (
+                                    <div className="mt-6">
+                                        <h4 className="font-medium mb-2">Lopende Aanvragen:</h4>
+                                        {abonnementAanvragen.map((aanvraag) => (
+                                            <div key={aanvraag.id} className="p-4 border rounded mb-2">
+                                                <p><strong>Type:</strong> {aanvraag.type}</p>
+                                                <p><strong>Status:</strong> {aanvraag.status}</p>
+                                                <p><strong>Aanvraagdatum:</strong> {new Date(aanvraag.datum).toLocaleDateString()}</p>
                                             </div>
                                         ))}
                                     </div>
+                                )}
+                            </div>
+                        )}
+
+                        {activeTab === 'medewerkerbeheer' && (
+                            <div>
+                                <h3 className="text-lg font-medium">Medewerkerbeheer</h3>
+                                <form onSubmit={handleAddMedewerker}>
+                                    <label>Medewerker toevoegen:</label>
+                                    <input
+                                        type="email"
+                                        className="border p-2 w-full"
+                                        placeholder="E-mailadres"
+                                        value={newMedewerkerEmail}
+                                        onChange={(e) => setNewMedewerkerEmail(e.target.value)}
+                                    />
+                                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4">
+                                        Toevoegen
+                                    </button>
+                                </form>
+                                <p>Medewerkersoverzicht:</p>
+                                <div className="mt-4">
+                                    {medewerkers.map((medewerker) => (
+                                        <div key={medewerker.id} className="p-4 border rounded bg-gray-50 mb-4">
+                                            <p><strong>Naam:</strong> {medewerker.Voornaam} {medewerker.Achternaam}</p>
+                                            <p><strong>E-mail:</strong> {medewerker.EmailAddress}</p>
+                                            <button
+                                                onClick={() => handleUpdateAbonnementRechten(medewerker.id, !medewerker.HeeftAbonnementRechten)}
+                                                className={`mt-2 px-4 py-2 rounded ${medewerker.HeeftAbonnementRechten ? 'bg-red-500' : 'bg-green-500'} text-white`}
+                                            >
+                                                {medewerker.HeeftAbonnementRechten ? 'Rechten intrekken' : 'Rechten toekennen'}
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
-                            )
-                        }
+                            </div>
+                        )}
 
                         {activeTab === 'gehuurde-voertuigen' && (
                             <div>
                                 <h3 className="text-lg font-medium">Gehuurde Voertuigen</h3>
                                 <p>Bekijk voertuigen die door medewerkers zijn gehuurd.</p>
-                                {/* Display rented vehicles */}
+                                <div className="mt-4">
+                                    {gehuurdeVoertuigen.map((voertuig) => (
+                                        <div key={voertuig.Id} className="p-4 border rounded bg-gray-50 mb-4">
+                                            <p><strong>Kenteken:</strong> {voertuig.Kenteken}</p>
+                                            <p><strong>Merk:</strong> {voertuig.Merk}</p>
+                                            <p><strong>Model:</strong> {voertuig.Model}</p>
+                                            <p><strong>Huurperiode:</strong> {new Date(voertuig.Start).toLocaleDateString()} - {new Date(voertuig.Einde).toLocaleDateString()}</p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         )}
 
@@ -538,91 +685,90 @@ export default function AccountPage() {
                             <div>
                                 <h3 className="text-lg font-medium">Facturatie & Facturen</h3>
                                 <p>Bekijk en download facturen.</p>
-                                {/* Display invoices */}
                             </div>
                         )}
 
-                        {
-                            activeTab === 'bedrijfsinfo' && (
-                                <div>
-                                    <h3 className="text-lg font-medium">Bedrijfsinformatie</h3>
-                                    <form>
-                                        <label>Bedrijfsnaam:</label>
-                                        <input
-                                            type="text"
-                                            className="border p-2 w-full"
-                                            value={userData?.BedrijfNaam || ''}
-                                            readOnly
-                                        />
-                                        <label>KVK Nummer:</label>
-                                        <input
-                                            type="text"
-                                            className="border p-2 w-full"
-                                            value={userData?.KvkNummer || ''}
-                                            readOnly
-                                        />
-                                        <label>E-mail:</label>
-                                        <input
-                                            type="email"
-                                            className="border p-2 w-full"
-                                            value={userData?.Email || ''}
-                                            readOnly
-                                        />
-                                        <label>Adres:</label>
-                                        <input
-                                            type="text"
-                                            className="border p-2 w-full"
-                                            value={userData?.StraatHuisnummer || ''}
-                                            readOnly
-                                        />
-                                        <label>Postcode:</label>
-                                        <input
-                                            type="text"
-                                            className="border p-2 w-full"
-                                            value={userData?.Postcode || ''}
-                                            readOnly
-                                        />
-                                    </form>
+
+
+
+                        {activeTab === 'bedrijfsinfo' && (
+                            <div>
+                                <h3 className="text-lg font-medium">Bedrijfsinformatie</h3>
+                                {/* Existing bedrijfsinfo content */}
+
+                                {/* Add this new notifications section */}
+                                <div className="mt-6">
+                                    <h4 className="text-md font-medium">Notificaties</h4>
+                                    <div className="space-y-2 mt-2">
+                                        {notifications.map((notification) => (
+                                            <div
+                                                key={notification.Id}
+                                                className="p-4 bg-blue-50 rounded-lg border border-blue-200"
+                                            >
+                                                <p className="text-blue-800">{notification.bericht}</p>
+                                                <p className="text-sm text-blue-600 mt-1">
+                                                    {new Date(notification.Verzondenop).toLocaleString()}
+                                                </p>
+                                            </div>
+                                        ))}
+                                        {notifications.length === 0 && (
+                                            <p className="text-gray-500">Geen nieuwe notificaties</p>
+                                        )}
+                                    </div>
                                 </div>
-                            )
-                        }
+                            </div>
+                        )}
 
 
 
-                        {/* Employee (Medewerker, Frontoffice, Backoffice) */}
-                        {
-                            activeTab === 'abonnementsgoedkeuringen' && (
-                                <div>
-                                    <h3 className="text-lg font-medium">Abonnementsgoedkeuringen</h3>
-                                    <p>Bekijk en keur abonnementsaanvragen van bedrijven goed of af.</p>
-                                    <div className="mt-4">
+
+                        {activeTab === 'abonnementsgoedkeuringen' && (
+                            <div>
+                                <h3 className="text-lg font-medium">Abonnementsgoedkeuringen</h3>
+                                <p>Bekijk en keur abonnementsaanvragen van bedrijven goed of af.</p>
+
+                                {isLoading ? (
+                                    <p>Laden...</p>
+                                ) : error ? (
+                                    <p className="text-red-500">{error}</p>
+                                ) : abonnementAanvragen.length === 0 ? (
+                                    <p className="text-gray-600">Geen openstaande aanvragen.</p>
+                                ) : (
+                                    <div className="mt-4 space-y-4">
                                         {abonnementAanvragen.map((aanvraag) => (
-                                            <div key={aanvraag.Id} className="p-4 border rounded bg-gray-50 mb-4">
-                                                <p><strong>Bedrijf:</strong> {aanvraag.BedrijfNaam}</p>
-                                                <p><strong>Abonnementstype:</strong> {aanvraag.AbonnementId}</p>
-                                                <p><strong>Status:</strong> {aanvraag.GoedGekeurd ? 'Goedgekeurd' : 'In afwachting'}</p>
-                                                {!aanvraag.GoedGekeurd && (
-                                                    <div className="mt-2">
-                                                        <button
-                                                            onClick={() => handleApproveOrReject(aanvraag.Id, true)}
-                                                            className="bg-green-500 text-white px-4 py-2 rounded mr-2"
-                                                        >
-                                                            Goedkeuren
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleApproveOrReject(aanvraag.Id, false)}
-                                                            className="bg-red-500 text-white px-4 py-2 rounded"
-                                                        >
-                                                            Afwijzen
-                                                        </button>
+                                            <div key={aanvraag.Id} className="p-4 border rounded bg-gray-50">
+                                                <div className="flex justify-between items-start">
+                                                    <div>
+                                                        <p><strong>Bedrijf:</strong> {aanvraag.BedrijfNaam}</p>
+                                                        <p><strong>Type:</strong> {aanvraag.AbonnementId}</p>
+                                                        <p><strong>Status:</strong> {aanvraag.GoedGekeurd ? 'Goedgekeurd' : 'In afwachting'}</p>
+                                                        {aanvraag.Opmerkingen && (
+                                                            <p><strong>Opmerkingen:</strong> {aanvraag.Opmerkingen}</p>
+                                                        )}
                                                     </div>
-                                                )}
+                                                    {!aanvraag.GoedGekeurd && (
+                                                        <div className="space-x-2">
+                                                            <button
+                                                                onClick={() => handleApproveOrReject(aanvraag.Id, true)}
+                                                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                                                            >
+                                                                Goedkeuren
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleApproveOrReject(aanvraag.Id, false)}
+                                                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                                            >
+                                                                Afwijzen
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
-                                </div>
-                            )
-                        }
+                                )}
+                            </div>
+                        )}
 
                         {activeTab === 'voertuigbeheer' && (
                             <div>
@@ -634,7 +780,15 @@ export default function AccountPage() {
                                     <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4">Toevoegen</button>
                                 </form>
                                 <p>Voertuigenoverzicht:</p>
-                                {/* Display vehicles */}
+                            </div>
+                        )}
+
+                        {activeTab === 'voertuigbeheer' && (
+                            <div>
+                                <h3 className="text-lg font-medium">Voertuigbeheer</h3>
+                                <div className="mt-4">
+                                    <FrontofficeVehicleList />
+                                </div>
                             </div>
                         )}
 
@@ -642,7 +796,6 @@ export default function AccountPage() {
                             <div>
                                 <h3 className="text-lg font-medium">Schadeclaims</h3>
                                 <p>Behandel schadeclaims en reparaties.</p>
-                                {/* Display damage claims */}
                             </div>
                         )}
 
@@ -650,7 +803,6 @@ export default function AccountPage() {
                             <div>
                                 <h3 className="text-lg font-medium">Verhuuroverzicht</h3>
                                 <p>Bekijk alle lopende en eerdere verhuringen.</p>
-                                {/* Display rental overview */}
                             </div>
                         )}
 
@@ -659,7 +811,6 @@ export default function AccountPage() {
                                 <h3 className="text-lg font-medium">Rapporten & Analyse</h3>
                                 <p>Genereer rapporten over verhuringen, omzet en voertuiggebruik.</p>
                                 <button className="bg-blue-500 text-white px-4 py-2 rounded">Rapport genereren</button>
-                                {/* Generate reports */}
                             </div>
                         )}
                     </div>

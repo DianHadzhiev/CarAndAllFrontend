@@ -3,7 +3,10 @@ import axios from "axios";
 export const apiClient = axios.create({
   baseURL: "http://localhost:5279",
   withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
   }
+}
 );
 
 export async function checkAuth() {
@@ -33,7 +36,7 @@ export async function checkAuth() {
 }
 
 export async function login(credentials) {
-  
+
   try {
     const url = credentials.type === "personal"
       ? '/api/auth/login'
@@ -82,29 +85,36 @@ export const fetchVehicle = async (vehicleId, pickupDate, returnDate, type) => {
 };
 
 export const submitHuuraanvraag = async (vehicleId, userId, email, pickupDate, returnDate) => {
-    return await apiClient.post('/api/Huur/AanvraagIndienen', {
-      IdVoertuig: vehicleId,       
-      HuurderId: userId,               
-      UserEmail: email,                
-      PickupDate: pickupDate,
-      ReturnDate: returnDate,
-    });
-  };
+  return await apiClient.post('/api/Huur/AanvraagIndienen', {
+    IdVoertuig: vehicleId,
+    HuurderId: userId,
+    UserEmail: email,
+    PickupDate: pickupDate,
+    ReturnDate: returnDate,
+  });
+};
 
-  export async function register(data) {
-    try {
-      const response = await apiClient.post('/api/Register/Particulier', {
-        VoorNaam: data.voorNaam,
-        AchterNaam: data.achterNaam,
-        Email: data.email,
-        Password: data.password,
-        TelefoonNummer: data.telefoonNummer,
-        StraatHuisnummer: data.straatHuisnummer,
-        Postcode: data.postcode,
-        Kvk: data.kvk || "string"
-      });
-      return response.data;
-    } catch (error) {
-      throw error.response?.data?.Message || "An error occurred during registration";
-    }
+export async function register(data) {
+  try {
+    const response = await apiClient.post('/api/Register/Particulier', {
+      VoorNaam: data.voorNaam,
+      AchterNaam: data.achterNaam,
+      Email: data.email,
+      Password: data.password,
+      TelefoonNummer: data.telefoonNummer,
+      StraatHuisnummer: data.straatHuisnummer,
+      Postcode: data.postcode,
+      Kvk: data.kvk || "string"
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.Message || "An error occurred during registration";
   }
+};
+
+
+
+
+
+
+
