@@ -41,11 +41,11 @@ export default function Register({
                 achterNaam: "",
                 email: "",
                 password: "",
-                telefoonNummer: "",
-                straatHuisnummer: "",
-                postcode: "",
-                companyName: "",
-                kvkNumber: "",
+                bedrijfnaam: "",
+                kvk: "",
+                bedrijfTelefoonNummer: "",
+                bedrijfStraatHuisnummer: "",
+                bedrijfPostcode: "",
               });
             }}
             className={`flex-1 p-4 text-center ${
@@ -134,47 +134,98 @@ export default function Register({
             </>
           ) : (
             <>
-              <input
-                type="text"
-                placeholder="Company Name"
-                value={formData.companyName}
-                onChange={(e) =>
-                  setFormData({ ...formData, companyName: e.target.value })
-                }
-                className="w-full mb-4 px-4 py-2 border rounded"
-                required
-              />
-              <input
-                type="text"
-                placeholder="KVK Number"
-                value={formData.kvkNumber}
-                onChange={(e) =>
-                  setFormData({ ...formData, kvkNumber: e.target.value })
-                }
-                className="w-full mb-4 px-4 py-2 border rounded"
-                required
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="w-full mb-4 px-4 py-2 border rounded"
-                required
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className="w-full mb-4 px-4 py-2 border rounded"
-                required
-              />
-            </>
+            <input
+              type="text"
+              placeholder="Company Name"
+              value={formData.bedrijfnaam}
+              onChange={(e) =>
+                setFormData({ ...formData, bedrijfnaam: e.target.value })
+              }
+              className="w-full mb-4 px-4 py-2 border rounded"
+              required
+            />
+            <input
+              type="text"
+              placeholder="KVK Number"
+              value={formData.kvk}
+              onChange={(e) =>
+                setFormData({ ...formData, kvk: e.target.value })
+              }
+              className="w-full mb-4 px-4 py-2 border rounded"
+              required
+            />
+            <input
+              type="tel"
+              placeholder="Company Phone"
+              value={formData.bedrijfTelefoonNummer}
+              onChange={(e) =>
+                setFormData({ ...formData, bedrijfTelefoonNummer: e.target.value })
+              }
+              className="w-full mb-4 px-4 py-2 border rounded"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Company Address"
+              value={formData.bedrijfStraatHuisnummer}
+              onChange={(e) =>
+                setFormData({ ...formData, bedrijfStraatHuisnummer: e.target.value })
+              }
+              className="w-full mb-4 px-4 py-2 border rounded"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Company Postcode"
+              value={formData.bedrijfPostcode}
+              onChange={(e) =>
+                setFormData({ ...formData, bedrijfPostcode: e.target.value })
+              }
+              className="w-full mb-4 px-4 py-2 border rounded"
+              required
+            />
+            {/* User fields */}
+            <input
+              type="text"
+              placeholder="First Name"
+              value={formData.voorNaam}
+              onChange={(e) =>
+                setFormData({ ...formData, voorNaam: e.target.value })
+              }
+              className="w-full mb-4 px-4 py-2 border rounded"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              value={formData.achterNaam}
+              onChange={(e) =>
+                setFormData({ ...formData, achterNaam: e.target.value })
+              }
+              className="w-full mb-4 px-4 py-2 border rounded"
+              required
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              className="w-full mb-4 px-4 py-2 border rounded"
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              className="w-full mb-4 px-4 py-2 border rounded"
+              required
+            />
+          </>
           )}
           <button
             type="submit"

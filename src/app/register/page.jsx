@@ -1,8 +1,8 @@
-"use client";
+'use client'
 import { useState } from "react";
 import { register } from "../lib/api";
-import Register from "../components/Register";
 import { useRouter } from "next/navigation";
+import Register from "../components/Register";
 
 export default function RegisterPage() {
   const [activeTab, setActiveTab] = useState("personal");
@@ -14,6 +14,12 @@ export default function RegisterPage() {
     telefoonNummer: "",
     straatHuisnummer: "",
     postcode: "",
+    // Business fields
+    bedrijfnaam: "",
+    kvk: "",
+    bedrijfTelefoonNummer: "",
+    bedrijfStraatHuisnummer: "",
+    bedrijfPostcode: "",
   });
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -22,18 +28,51 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await register(formData);
-      setSuccess(true);
-      setError("");
-      console.log("Registration successful:", result);
-      router.push(`/confirm-email?email=${encodeURIComponent(formData.email)}`);
+      if (activeTab === "personal") {
+        const result = await register(null, {
+          voorNaam: formData.voorNaam,
+          achterNaam: formData.achterNaam,
+          email: formData.email,
+          password: formData.password,
+          telefoonNummer: formData.telefoonNummer,
+          straatHuisnummer: formData.straatHuisnummer,
+          postcode: formData.postcode
+        });
+        
+        setSuccess(true);
+        setError("");
+        router.push(`/confirm-email?email=${encodeURIComponent(formData.email)}`);
+      } else {
+        const userDto = {
+          voorNaam: formData.voorNaam,
+          achterNaam: formData.achterNaam,
+          email: formData.email,
+          password: formData.password,
+          kvk: formData.kvk,
+          straatHuisnummer: formData.straatHuisnummer,
+          postcode: formData.postcode  
+        };
+  
+        const bedrijfDto = {
+          bedrijfnaam: formData.bedrijfnaam,
+          kvk: formData.kvk,
+          bedrijfTelefoonNummer: formData.bedrijfTelefoonNummer,
+          bedrijfStraatHuisnummer: formData.bedrijfStraatHuisnummer,
+          bedrijfPostcode: formData.bedrijfPostcode
+        };
+  
+        const result = await register(null, userDto, bedrijfDto);
+        
+        setSuccess(true);
+        setError("");
+        router.push(`/confirm-email?email=${encodeURIComponent(formData.email)}`);
+      }
     } catch (err) {
       setSuccess(false);
       setError(err.toString());
       console.error("Registration failed:", err);
     }
   };
-
   return (
     <Register
       formData={formData}

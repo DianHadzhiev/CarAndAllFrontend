@@ -6,8 +6,8 @@ import { AuthProvider } from "./context/AuthContext";
 
 export default async function RootLayout({ children }) {
     return (
-        <html lang="en">
-            <body className="bg-blue-100 text-black flex flex-col min-h-screen">
+        <html lang="nl" className="h-full">
+            <body className="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
                 <AuthProvider initialAuthState>
                     <Header />
                     <main className="flex-grow mx-auto w-full max-w-[1920px] px-4">{children}</main>

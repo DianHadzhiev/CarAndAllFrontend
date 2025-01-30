@@ -4,12 +4,12 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';  // Change this import
+import { useRouter } from 'next/navigation';
 
 export default function BookingConfirmationPage() {
   const searchParams = useSearchParams();
   const paymentId = searchParams.get('paymentId');
-  const router = useRouter(); // Initialize the router here
+  const router = useRouter();
 
   return (
     <div className="max-w-2xl mx-auto p-6 text-center">

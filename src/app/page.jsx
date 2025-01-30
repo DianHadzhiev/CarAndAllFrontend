@@ -1,10 +1,5 @@
-
-
-
-'use client';
 import SearchBar from "./components/SearchBar";
 import { ChevronRight, Car, Clock, Users, BookOpen, Building, Shield } from 'lucide-react';
-import Image from 'next/image';
 
 export default function Home() {
     return (

@@ -6,7 +6,6 @@ import { Elements } from '@stripe/react-stripe-js';
 import getStripe from '../lib/stripe';
 import PaymentForm from '../components/PaymentForm';
 import { fetchVehicle } from '../lib/api';
-import VehicleDetail from '../components/VehicleDetail';
 
 export default function PaymentPage() {
   const searchParams = useSearchParams();

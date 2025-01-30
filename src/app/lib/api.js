@@ -94,28 +94,48 @@ export const submitHuuraanvraag = async (vehicleId, userId, email, pickupDate, r
   });
 };
 
-
-
-
-
-
-export async function register(data) {
+export async function register(url, userDto, bedrijfDto = null) {
   try {
-    const response = await apiClient.post('/api/Register/Particulier', {
-      VoorNaam: data.voorNaam,
-      AchterNaam: data.achterNaam,
-      Email: data.email,
-      Password: data.password,
-      TelefoonNummer: data.telefoonNummer,
-      StraatHuisnummer: data.straatHuisnummer,
-      Postcode: data.postcode,
-      Kvk: data.kvk || "string"
-    });
-    return response.data;
+    if (bedrijfDto) {
+      // Business registration
+      const queryParams = new URLSearchParams({
+        VoorNaam: userDto.voorNaam,
+        AchterNaam: userDto.achterNaam,
+        Email: userDto.email,
+        Password: userDto.password,
+        Kvk: userDto.kvk,
+        telefoonNummer: bedrijfDto.bedrijfTelefoonNummer,
+        StraatHuisnummer: bedrijfDto.bedrijfStraatHuisnummer,
+        Postcode: bedrijfDto.bedrijfPostcode
+      });
+
+      const response = await apiClient.post(`/api/Register/WagenParkBeheerder?${queryParams}`, {
+        Bedrijfnaam: bedrijfDto.bedrijfnaam,
+        Kvk: bedrijfDto.kvk,
+        TelefoonNummer: bedrijfDto.bedrijfTelefoonNummer,
+        StraatHuisnummer: bedrijfDto.bedrijfStraatHuisnummer,
+        Postcode: bedrijfDto.bedrijfPostcode
+      });
+
+      return response.data;
+    } else {
+      const response = await apiClient.post('/api/Register/Particulier', {
+        voorNaam: userDto.voorNaam,
+        achterNaam: userDto.achterNaam,
+        email: userDto.email,
+        password: userDto.password,
+        telefoonNummer: userDto.telefoonNummer,
+        straatHuisnummer: userDto.straatHuisnummer,
+        postcode: userDto.postcode,
+        kvk: userDto.kvk || "string"
+      });
+
+      return response.data;
+    }
   } catch (error) {
     throw error.response?.data?.Message || "An error occurred during registration";
   }
-};
+}
 
 
 
