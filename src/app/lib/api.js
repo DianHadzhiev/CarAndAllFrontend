@@ -94,6 +94,11 @@ export const submitHuuraanvraag = async (vehicleId, userId, email, pickupDate, r
   });
 };
 
+
+
+
+
+
 export async function register(data) {
   try {
     const response = await apiClient.post('/api/Register/Particulier', {

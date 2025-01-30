@@ -22,11 +22,24 @@ export const AuthProvider = ({ children, initialUser }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!initialUser);
   const [error, setError] = useState(null);
 
-  const updateUserState = (userData) => {
-    setUser(userData);
-    setIsAuthenticated(!!userData);
-  };
+  // const updateUserState = (userData) => {
+  //   setUser(userData);
+  //   setIsAuthenticated(!!userData);
+  // };
 
+  const updateUserState = (userData) => {
+    if (userData) {
+      setUser({
+        userId: userData.id || userData.userId, // Make sure this matches your backend
+        email: userData.email || userData.emailAddress,
+        role: userData.role
+      });
+      setIsAuthenticated(true);
+    } else {
+      setUser(null);
+      setIsAuthenticated(false);
+    }
+  };
   useEffect(() => {
     if (!initialUser) {
       checkAuth()

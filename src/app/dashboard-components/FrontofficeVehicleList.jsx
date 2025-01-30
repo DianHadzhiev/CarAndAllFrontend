@@ -17,7 +17,7 @@ const FrontofficeVehicleList = () => {
         const fetchVehicles = async () => {
             try {
                 setLoading(true);
-                const response = await apiClient.get('/api/Voertuig/GetAllVehiclesForFrontoffice');
+                const response = await apiClient.get('/api/Voertuig/GetVoertuigen');
                 if (response.status === 200) {
                     setVehicles(response.data || []);
                 }

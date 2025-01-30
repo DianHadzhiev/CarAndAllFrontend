@@ -26,46 +26,46 @@ const UserEditForm = ({ userData, onUpdate }) => {
     };
 
     const handleSubmit = async (e) => {
-      e.preventDefault();
-      setError(null);
-      setSuccess(null);
-  
-      const submitData = {
-          voornaam: formData.voornaam,
-          achternaam: formData.achternaam,
-          emailAddress: formData.emailAddress,
-          telefoonNummer: formData.telefoonNummer,
-          straatHuisnummer: formData.straatHuisnummer,
-          postcode: formData.postcode,
-          currentPassword: formData.currentPassword || null,
-          newPassword: formData.newPassword || null
-      };
-  
-      try {
-          // Remove the ID from the URL since we're getting it from the token
-          const response = await apiClient.put('/api/User/EditUserProfile', submitData);
-          if (response.status === 200) {
-              setSuccess('Profile updated successfully!');
-              onUpdate && onUpdate(submitData);
-              setIsEditing(false);
-              setFormData(prev => ({
-                  ...prev,
-                  currentPassword: '',
-                  newPassword: ''
-              }));
-          }
-      } catch (err) {
-          setError(err.response?.data || 'Failed to update profile');
-          console.error('Update error:', err);
-      }
-  };
+        e.preventDefault();
+        setError(null);
+        setSuccess(null);
+
+        const submitData = {
+            voornaam: formData.voornaam,
+            achternaam: formData.achternaam,
+            emailAddress: formData.emailAddress,
+            telefoonNummer: formData.telefoonNummer,
+            straatHuisnummer: formData.straatHuisnummer,
+            postcode: formData.postcode,
+            currentPassword: formData.currentPassword || null,
+            newPassword: formData.newPassword || null
+        };
+
+        try {
+            // Remove the ID from the URL since we're getting it from the token
+            const response = await apiClient.put('/api/User/EditUserProfile', submitData);
+            if (response.status === 200) {
+                setSuccess('Profile updated successfully!');
+                onUpdate && onUpdate(submitData);
+                setIsEditing(false);
+                setFormData(prev => ({
+                    ...prev,
+                    currentPassword: '',
+                    newPassword: ''
+                }));
+            }
+        } catch (err) {
+            setError(err.response?.data || 'Failed to update profile');
+            console.error('Update error:', err);
+        }
+    };
 
     if (!isEditing) {
         return (
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
                     <h2 className="text-xl font-semibold">Personal Information</h2>
-                    <button 
+                    <button
                         onClick={() => setIsEditing(true)}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
                     >
@@ -97,6 +97,16 @@ const UserEditForm = ({ userData, onUpdate }) => {
                         <label className="block text-sm font-medium text-gray-700">Postcode</label>
                         <p className="mt-1 text-sm text-gray-900">{userData?.postcode}</p>
                     </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Rol</label>
+                        <p className="mt-1 text-sm text-gray-900">{userData?.role}</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Kvk</label>
+                        <p className="mt-1 text-sm text-gray-900">{userData?.kvk}</p>
+                    </div>
+
+
                 </div>
             </div>
         );
@@ -105,13 +115,13 @@ const UserEditForm = ({ userData, onUpdate }) => {
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
-            
+
             {error && (
                 <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
                     {error}
                 </div>
             )}
-            
+
             {success && (
                 <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded">
                     {success}
@@ -184,6 +194,8 @@ const UserEditForm = ({ userData, onUpdate }) => {
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded shadow-sm"
                     />
                 </div>
+
+
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Current Password</label>

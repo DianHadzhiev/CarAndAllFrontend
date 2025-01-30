@@ -1,17 +1,4 @@
-// import React from 'react'
 
-// export default function Footer() {
-
-//     return (
-//     <footer className='max-h-80 bg-black'>
-
-//     </footer>
-//   )
-// }
-
-// components/Footer.jsx
-
-// components/Footer.jsx
 'use client';
 import Link from 'next/link';
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';

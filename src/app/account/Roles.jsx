@@ -3,6 +3,7 @@ export const Roles = {
     particulier: 'particulier',
     frontoffice: 'frontoffice',
     backoffice: 'backoffice',
-    bedrijf: 'bedrijf', 
+    wagenParkBeheerder: 'wagenParkBeheerder', 
+    bedrijf: 'wagenParkBeheerder', // Alias for backward compatibility
 };
 export default Roles;
